@@ -141,11 +141,15 @@
     <div class="hearts">💗💓💞💕💘💝</div>
   </div>
 
+  <!-- Hidden Audio -->
+  <audio id="bg-music" src="OVER AND OVER - RemixBooth.In.mp3"></audio>
+
   <script>
     const noBtn = document.getElementById('no');
     const yesBtn = document.getElementById('yes');
     const mainPage = document.getElementById('main-page');
     const lovePage = document.getElementById('love-page');
+    const music = document.getElementById('bg-music');
 
     noBtn.addEventListener('mouseenter', () => {
       const maxX = window.innerWidth - noBtn.offsetWidth - 20;
@@ -162,6 +166,7 @@
     yesBtn.addEventListener('click', () => {
       mainPage.style.display = 'none';
       lovePage.style.display = 'flex';
+      music.play();
       startFloatingHearts();
     });
 
