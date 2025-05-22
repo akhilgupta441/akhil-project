@@ -10,7 +10,8 @@
 
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #fff0f6;
+      background: url("IMG_0777akhil.jpg") no-repeat center center fixed;
+      background-size: cover;
       margin: 0;
       height: 100vh;
       display: flex;
@@ -18,13 +19,16 @@
       justify-content: center;
       flex-direction: column;
       overflow: hidden;
+      transition: background 1s ease-in-out;
     }
 
     h1 {
       font-size: 2.5rem;
-      color: #ff4d6d;
+      color: #fff;
+      text-shadow: 2px 2px 5px #000;
       margin-bottom: 30px;
       text-align: center;
+      animation: fadeIn 1s ease-out;
     }
 
     .buttons {
@@ -41,6 +45,11 @@
       border-radius: 8px;
       cursor: pointer;
       position: absolute;
+      transition: transform 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
     }
 
     #yes {
@@ -64,16 +73,18 @@
       justify-content: center;
       height: 100vh;
       text-align: center;
+      animation: fadeIn 1s ease-in-out;
     }
 
     .love-page h1 {
       font-size: 3rem;
-      color: #ff4d6d;
+      color: #fff;
+      text-shadow: 2px 2px 6px #000;
     }
 
     .love-page p {
       font-size: 1.5rem;
-      color: #ff6699;
+      color: #ffccdd;
       margin: 20px 0;
     }
 
@@ -85,6 +96,30 @@
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .floating-heart {
+      position: fixed;
+      font-size: 24px;
+      animation: fly 4s linear infinite;
+      color: #ff4d6d;
+      pointer-events: none;
+    }
+
+    @keyframes fly {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100vh) scale(1.5);
+      }
     }
   </style>
 </head>
@@ -127,7 +162,22 @@
     yesBtn.addEventListener('click', () => {
       mainPage.style.display = 'none';
       lovePage.style.display = 'flex';
+      startFloatingHearts();
     });
+
+    function startFloatingHearts() {
+      setInterval(() => {
+        const heart = document.createElement('div');
+        heart.classList.add('floating-heart');
+        heart.textContent = ['💖','💗','💕','💓','💘','💝'][Math.floor(Math.random() * 6)];
+        heart.style.left = Math.random() * 100 + 'vw';
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 4000);
+      }, 500);
+    }
   </script>
 
 </body>
