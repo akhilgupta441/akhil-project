@@ -10,7 +10,6 @@
 
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #111; /* Initial plain background */
       margin: 0;
       height: 100vh;
       display: flex;
@@ -19,6 +18,18 @@
       flex-direction: column;
       overflow: hidden;
       transition: background 1s ease-in-out;
+    }
+
+    body.animated-background {
+      background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+      background-size: 800% 800%;
+      animation: gradientBG 10s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     h1 {
@@ -72,7 +83,13 @@
       justify-content: center;
       height: 100vh;
       text-align: center;
-      animation: fadeIn 1s ease-in-out;
+      transform: scale(0.5);
+      opacity: 0;
+    }
+
+    .love-page.show {
+      display: flex;
+      animation: popup 0.5s ease-out forwards;
     }
 
     .love-page h1 {
@@ -102,10 +119,21 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    @keyframes popup {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
     .floating-heart {
       position: fixed;
       font-size: 24px;
-      animation: fly 4s linear infinite;
+      animation: fly 4s linear forwards;
       color: #ff4d6d;
       pointer-events: none;
     }
@@ -120,9 +148,65 @@
         transform: translateY(-100vh) scale(1.5);
       }
     }
+
+    .floating-heart-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .floating-heart-bg .heart {
+      position: absolute;
+      color: #ff4d6d;
+      opacity: 0.8;
+      font-size: 16px;
+      animation: floatHeart 8s linear infinite;
+    }
+
+    @keyframes floatHeart {
+      0% {
+        transform: translateY(100vh) scale(0.5);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(white, rgba(255,255,255,0));
+      border-radius: 50%;
+      box-shadow: 0 0 6px 2px white;
+      opacity: 0.8;
+      animation: sparkleFloat 4s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes sparkleFloat {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="animated-background">
+
+  <!-- Background Effects -->
+  <div class="floating-heart-bg" id="bg-hearts"></div>
+  <div class="floating-heart-bg" id="sparkle-container"></div>
 
   <!-- Main Page -->
   <div id="main-page">
@@ -149,46 +233,80 @@
     const mainPage = document.getElementById('main-page');
     const lovePage = document.getElementById('love-page');
     const music = document.getElementById('bg-music');
+    const bgHeartContainer = document.getElementById('bg-hearts');
+    const sparkleContainer = document.getElementById('sparkle-container');
 
+    // Floating hearts before "Yes"
+    function createBackgroundHearts() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.textContent = ['💗', '💖', '💘', '💞'][Math.floor(Math.random() * 4)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = `${Math.random() * 20 + 10}px`;
+      bgHeartContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 8000);
+    }
+    setInterval(createBackgroundHearts, 300);
+
+    // Sparkles
+    function createSparkles() {
+      const sparkle = document.createElement('div');
+      sparkle.classList.add('sparkle');
+      sparkle.style.left = Math.random() * 100 + 'vw';
+      sparkle.style.top = Math.random() * 100 + 'vh';
+      sparkle.style.animationDuration = `${Math.random() * 2 + 3}s`;
+      sparkleContainer.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 5000);
+    }
+    setInterval(createSparkles, 200);
+
+    // Move No button
     noBtn.addEventListener('mouseenter', () => {
       const maxX = window.innerWidth - noBtn.offsetWidth - 20;
       const maxY = window.innerHeight - noBtn.offsetHeight - 20;
-
       const randomX = Math.floor(Math.random() * maxX);
       const randomY = Math.floor(Math.random() * maxY);
-
       noBtn.style.left = `${randomX}px`;
       noBtn.style.top = `${randomY}px`;
       noBtn.style.position = 'fixed';
     });
 
+    // Yes button clicked
     yesBtn.addEventListener('click', () => {
       mainPage.style.display = 'none';
-      lovePage.style.display = 'flex';
+      lovePage.classList.add('show');
 
-      // Change background to image
       document.body.style.background = "url('IMG_0777akhil.jpg') no-repeat center center fixed";
       document.body.style.backgroundSize = "cover";
 
-      // Play music
       music.play();
 
-      // Hearts animation
-      startFloatingHearts();
+      burstHearts();
+      setInterval(startFloatingHearts, 2000);
     });
 
-    function startFloatingHearts() {
-      setInterval(() => {
+    function burstHearts() {
+      for (let i = 0; i < 30; i++) {
         const heart = document.createElement('div');
         heart.classList.add('floating-heart');
         heart.textContent = ['💖','💗','💕','💓','💘','💝'][Math.floor(Math.random() * 6)];
         heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.top = Math.random() * 80 + 'vh';
+        heart.style.fontSize = `${Math.random() * 30 + 16}px`;
         document.body.appendChild(heart);
+        setTimeout(() => { heart.remove(); }, 4000);
+      }
+    }
 
-        setTimeout(() => {
-          heart.remove();
-        }, 4000);
-      }, 500);
+    function startFloatingHearts() {
+      const heart = document.createElement('div');
+      heart.classList.add('floating-heart');
+      heart.textContent = ['💖','💗','💕','💓','💘','💝'][Math.floor(Math.random() * 6)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.top = '90vh';
+      heart.style.fontSize = `${Math.random() * 20 + 16}px`;
+      document.body.appendChild(heart);
+      setTimeout(() => { heart.remove(); }, 4000);
     }
   </script>
 
