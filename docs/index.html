@@ -10,8 +10,7 @@
 
     body {
       font-family: 'Arial', sans-serif;
-      background: url("IMG_0777akhil.jpg") no-repeat center center fixed;
-      background-size: cover;
+      background-color: #111; /* Initial plain background */
       margin: 0;
       height: 100vh;
       display: flex;
@@ -166,7 +165,15 @@
     yesBtn.addEventListener('click', () => {
       mainPage.style.display = 'none';
       lovePage.style.display = 'flex';
+
+      // Change background to image
+      document.body.style.background = "url('IMG_0777akhil.jpg') no-repeat center center fixed";
+      document.body.style.backgroundSize = "cover";
+
+      // Play music
       music.play();
+
+      // Hearts animation
       startFloatingHearts();
     });
 
